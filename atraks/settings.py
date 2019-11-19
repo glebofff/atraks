@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'untitled.urls'
+ROOT_URLCONF = 'atraks.urls'
 
 TEMPLATES = [
     {
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'untitled.wsgi.application'
+WSGI_APPLICATION = 'atraks.wsgi.application'
 
 
 # Database
