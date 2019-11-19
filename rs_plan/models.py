@@ -20,7 +20,7 @@ class Plan(models.Model):
     pfx = models.CharField(max_length=3, db_index=True)
     beg = models.CharField(max_length=7, db_index=True)
     end = models.CharField(max_length=7, db_index=True)
-    capacity = models.SmallIntegerField(db_index=True)
+    capacity = models.IntegerField(db_index=True)
     operator = models.ForeignKey(Operator, on_delete=models.CASCADE)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
 
