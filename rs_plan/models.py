@@ -12,6 +12,11 @@ class Region(models.Model):
 
 
 class Plan(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['pfx', 'beg', 'end'], name='plan_unique_constraint')
+        ]
+
     pfx = models.CharField(max_length=3, db_index=True)
     beg = models.CharField(max_length=7, db_index=True)
     end = models.CharField(max_length=7, db_index=True)
