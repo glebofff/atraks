@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
+ROOT="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+if [ "$1" = "cleanup" ]; then
+  find . -type f -name '*.pyc' -delete -print
+  find . -type d -name __pycache__ -delete -print
+
+else
+  python $ROOT/manage.py $*
+fi
