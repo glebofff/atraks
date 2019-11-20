@@ -1,0 +1,145 @@
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .number--button,
+        .number--input {
+            vertical-align: middle;
+            padding: 4px;
+            border-radius: 3px;
+            border: 1px solid #aaa;
+            height: 24px;
+            margin: 0;
+        }
+        .number--button {
+            padding: 4px 8px;
+        }
+        .number--button:hover {
+            background-color: rgba(0,0,255,0.1);
+        }
+        .results {
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 1ch;
+            margin-top: 1em;
+        }
+        .results--message {
+
+        }
+
+        .results--message__error {
+            color: red
+        }
+
+        .results--card > div > span {
+            min-width: 100px
+        }
+    </style>
+
+</head>
+<body>
+{% verbatim %}
+<div id="app">
+    <h3> Enter valid MSISDN phone number: </h3>
+    <input class="number--input" type="number" maxlength="10" v-model="number">
+    <button class="number--button" type="button" v-on:click="onCheckClick" :disabled="loading">
+        {{ checkButtonCaption }}
+    </button>
+
+    <div class="results" v-if="result.ok !== null">
+        <div class="results--message" v-if="result.statusText" :class="{'results--message__error': !result.ok}">
+            {{ result.statusText }}
+        </div>
+        <div v-if="result.ok" class="results--card">
+            <div>
+                <span>Number: </span> <span> {{ result.number }}</span>
+            </div>
+            <div>
+                <span>Organization: </span> <span> {{ result.org }}</span>
+            </div>
+            <div>
+                <span>Region: </span> <span> {{ result.reg }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endverbatim %}
+</body>
+
+<script type="text/javascript">
+    const createResult = ({ok = null, statusText = null, number = null, org = null, reg = null }={}) => (
+        {
+            ok, statusText, number, org, reg
+        }
+    )
+
+    const re = /^([1-9])?[0-9]{10,14}$/;
+
+    const app = new Vue({
+        el: '#app',
+        data: {
+            number: '',
+            loading: false,
+            result: {
+                ...createResult()
+            }
+        },
+        computed: {
+            checkButtonCaption() {
+                if (this.cleanNumber.length>=11 && !this.isNumberValid) return 'Invalid Number';
+                if (this.loading) return 'Checking...';
+                return 'Check';
+            },
+            cleanNumber() {
+                return String(this.number || '').replace(/\D/g, '');
+
+            },
+            isNumberValid() {
+                if (
+                    !this.cleanNumber
+                    || ! re.exec(this.cleanNumber)
+                ) return false;
+
+                return true;
+            }
+        },
+        methods: {
+            onCheckClick: function() {
+                if (!this.isNumberValid) {
+                    this.result = createResult({
+                        ok: false,
+                        statusText: `Invalid number: ${this.cleanNumber}`
+
+                    });
+                    return;
+                }
+
+                this.loading = true;
+
+                fetch(
+                    `${window.location.href}${this.cleanNumber}`
+                ).then(
+                    response => {
+                        this.loading = false;
+
+                        if (!response.ok) {
+                            this.result = createResult(response)
+                        }
+                        return response.json()
+                    }
+                ).then(
+                    js => {
+                        this.result = createResult(js)
+                    }
+                ).finally(
+                    ()=>{
+                        this.loading = false;
+                    }
+                )
+            }
+        },
+    })
+
+</script>
+
+</html>

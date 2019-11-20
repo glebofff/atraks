@@ -89,7 +89,6 @@ class Command(BaseCommand):
     def download_file(self, url: str):
         from urllib.request import urlopen
         from urllib.error import URLError
-        from rs_plan.utils.string import convert_encoding
 
         self.stdout.write(
             f'Downloading file from {url}'
@@ -108,7 +107,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.dialect.delimiter = options.get('delimiter', ";")
-        print('delimiter', self.dialect.delimiter)
         for p in options['prefixes']:
             self.download_file(
                 RsPlanConfig.get_file_url(url=options['url'], prefix=p)
